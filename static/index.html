@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZCare AI Assistant - Hospital Information Chatbot</title>
+    <meta name="description" content="Ask ZCare AI Assistant about hospital information, doctor timings, booking appointments, and hospital policies.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo-container">
+                <img src="/static/icon/medical-symbol.png" alt="ZCare Logo" class="header-logo" id="header-logo-img">
+                <h1 class="header-title">ZCare AI Assistant</h1>
+            </div>
+            <div class="header-divider"></div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="chat-viewport" id="chat-viewport">
+            
+            <!-- Monitoring Alert Banner -->
+            <div class="info-banner" id="info-banner">
+                <div class="info-icon-container">
+                    <svg class="info-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#00bfa5"/>
+                        <path d="M12 16V12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="8" r="1" fill="white"/>
+                    </svg>
+                </div>
+                <div class="info-banner-text">
+                    <strong>Information:</strong> By chatting, you agree this chat may be monitored, recorded, and used for personalization, analytics, and other business services per our <a href="#" class="privacy-link" id="privacy-statement-link">Privacy Statement</a>.
+                </div>
+                <button class="close-banner-btn" id="close-banner-btn" aria-label="Close Information Banner">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L13 13M1 13L13 1" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Scrollable Conversation Feed -->
+            <div class="conversation-feed" id="conversation-feed">
+                
+                <!-- Bot Initial Welcome Greeting -->
+                <div class="message-wrapper bot-message-wrapper" id="initial-welcome-message">
+                    <div class="avatar-container">
+                        <img src="/static/icon/assistant.png" alt="ZCare Bot" class="bot-avatar">
+                    </div>
+                    <div class="message-content-container">
+                        <div class="message-meta">
+                            <span class="bot-name">ZCare Assistant</span>
+                            <span class="message-time" id="welcome-timestamp">08:12 PM</span>
+                        </div>
+                        <div class="message-bubble welcome-bubble">
+                            <h2 class="welcome-heading">Hello! I'm your ZCare AI Assistant.</h2>
+                            <p class="welcome-text">I can assist you with doctor timings, scheduling appointments, visitor guidelines, and hospital policies.</p>
+                            <p class="welcome-text">You can type your question or choose from the options below.</p>
+                            
+                            <div class="note-box">
+                                <strong>Note:</strong> I am powered by AI. Before using AI results, verify accuracy and completeness.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Grid -->
+                <div class="quick-actions-section" id="quick-actions-section">
+                    <h3 class="quick-actions-title">Quick Actions</h3>
+                    <div class="quick-actions-grid">
+                        
+                        <!-- Card 1: Find a Doctor -->
+                        <div class="action-card" id="card-find-doctor" data-query="Find a Doctor: Search doctors and specializations in the hospital.">
+                            <div class="card-icon-wrapper doctor-wrapper">
+                                <img src="/static/icon/stethoscope.png" alt="Stethoscope" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Find a Doctor</h4>
+                                <p class="card-subtitle">Search doctors & specializations</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Book Appointment -->
+                        <div class="action-card" id="card-book-appointment" data-query="Book Appointment: Learn about the appointment booking process.">
+                            <div class="card-icon-wrapper calendar-wrapper">
+                                <img src="/static/icon/calendar.png" alt="Calendar" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Book Appointment</h4>
+                                <p class="card-subtitle">Learn about appointment process</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Doctor Timings -->
+                        <div class="action-card" id="card-doctor-timings" data-query="Doctor Timings: Check doctor schedules and timings.">
+                            <div class="card-icon-wrapper timings-wrapper">
+                                <img src="/static/icon/clock.png" alt="Clock" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Doctor Timings</h4>
+                                <p class="card-subtitle">Check doctor schedules</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Hospital Information -->
+                        <div class="action-card" id="card-hospital-info" data-query="Hospital Information: Timings, departments, and facilities.">
+                            <div class="card-icon-wrapper hospital-wrapper">
+                                <img src="/static/icon/office-building.png" alt="Office Building" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Hospital Information</h4>
+                                <p class="card-subtitle">Timings, departments, facilities</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Appointment Policies -->
+                        <div class="action-card" id="card-appointment-policies" data-query="Appointment Policies: Cancellation, reschedule, and other booking policies.">
+                            <div class="card-icon-wrapper policies-wrapper">
+                                <img src="/static/icon/list.png" alt="List" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Appointment Policies</h4>
+                                <p class="card-subtitle">Cancellation, reschedule & other policies</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Hospital Policies -->
+                        <div class="action-card" id="card-hospital-policies" data-query="Hospital Policies: Visitor guidelines, insurance, and other policies.">
+                            <div class="card-icon-wrapper shield-wrapper">
+                                <img src="/static/icon/shield.png" alt="Shield" class="card-icon">
+                            </div>
+                            <div class="card-details">
+                                <h4 class="card-title">Hospital Policies</h4>
+                                <p class="card-subtitle">Visitor, insurance & other guidelines</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Date Divider -->
+                <div class="date-divider-container" id="date-divider">
+                    <span class="date-badge">Today</span>
+                </div>
+
+                <!-- Active Chat Messages Container (Dynamic Content) -->
+                <div class="active-messages" id="active-messages"></div>
+                
+                <!-- Typing/Loading Indicator -->
+                <div class="message-wrapper bot-message-wrapper loading-indicator-wrapper" id="typing-indicator" style="display: none;">
+                    <div class="avatar-container">
+                        <img src="/static/icon/assistant.png" alt="ZCare Bot" class="bot-avatar">
+                    </div>
+                    <div class="message-content-container">
+                        <div class="message-meta">
+                            <span class="bot-name">ZCare Assistant</span>
+                            <span class="message-time">Typing...</span>
+                        </div>
+                        <div class="message-bubble typing-bubble">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Input Panel & Controls -->
+        <footer class="app-controls">
+            <!-- Text Input Row -->
+            <div class="input-row-container">
+                <form class="input-form" id="chat-input-form">
+                    <input type="text" id="chat-message-input" autocomplete="off" placeholder="Type your message..." required>
+                    <button type="submit" class="send-message-btn" id="send-btn" aria-label="Send Message">
+                        <img src="/static/icon/send-message.png" alt="Send" class="send-icon">
+                    </button>
+                </form>
+            </div>
+
+            <!-- Guidelines and New Chat Option -->
+            <div class="guideline-banner">
+                <div class="sparkle-icon-wrapper">
+                    <!-- Custom clean sparkling star SVG -->
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3L14.8 9.2L21 12L14.8 14.8L12 21L9.2 14.8L3 12L9.2 9.2L12 3Z" fill="#00bfa5" stroke="#00bfa5" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M5 5L6 7M19 19L18 17M19 5L18 7M5 19L6 17" stroke="#00bfa5" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="guideline-text">
+                    Do you want to start a new conversation? To switch topics, <a href="#" class="new-conversation-link" id="new-conversation-trigger">clear and start a new conversation</a>.
+                </div>
+            </div>
+
+            <!-- Secondary Actions Row -->
+            <div class="secondary-actions-row">
+                <!-- Feedback Action -->
+                <button class="secondary-action-card" id="btn-feedback" aria-label="Give Feedback">
+                    <div class="secondary-action-content">
+                        <div class="sec-icon-circle green-circle">
+                            <!-- Feedback Speech Bubble Icon -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#00bfa5" stroke="#00bfa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span class="sec-text">Feedback</span>
+                    </div>
+                    <svg class="chevron-right" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5l7 7-7 7" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <!-- Email Us Action -->
+                <button class="secondary-action-card" id="btn-email" aria-label="Email Support">
+                    <div class="secondary-action-content">
+                        <div class="sec-icon-circle blue-circle">
+                            <img src="/static/icon/mail.png" alt="Mail" class="sec-icon-img">
+                        </div>
+                        <span class="sec-text">Email Us</span>
+                    </div>
+                    <svg class="chevron-right" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5l7 7-7 7" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Footer Experience Rating -->
+            <div class="controls-footer">
+                <div class="rating-container">
+                    <span class="rating-label">Rate your experience:</span>
+                    <button class="rating-btn" id="btn-helpful" aria-label="Mark Helpful">
+                        <svg class="rating-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                        </svg>
+                        Helpful
+                    </button>
+                    <button class="rating-btn" id="btn-not-helpful" aria-label="Mark Not Helpful">
+                        <svg class="rating-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm12-7h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>
+                        </svg>
+                        Not Helpful
+                    </button>
+                </div>
+                <button class="info-tooltip-btn" id="info-tooltip-trigger" aria-label="Information Summary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#9CA3AF" stroke-width="2"/>
+                        <path d="M12 16V12" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="8" r="1" fill="#9CA3AF"/>
+                    </svg>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Premium Feedback Modal -->
+    <div class="modal-overlay" id="feedback-modal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Your Feedback</h3>
+                <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L13 13M1 13L13 1" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Your thoughts and experience help us improve the ZCare AI Assistant.</p>
+                <form id="feedback-form">
+                    <textarea class="feedback-textarea" id="feedback-text" placeholder="Type your feedback, suggestions, or queries here..." required></textarea>
+                    
+                    <div class="direct-contact-section">
+                        <div class="contact-divider"><span>Or Connect Directly</span></div>
+                        <div class="contact-links-grid">
+                            <a href="mailto:{{ support_email }}?subject=ZCare AI Assistant Inquiry" class="contact-link-item">
+                                <div class="contact-icon-circle blue-bg">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">Email Us</span>
+                                    <span class="contact-val">{{ support_email }}</span>
+                                </div>
+                            </a>
+                            <a href="tel:{{ support_phone_raw }}" class="contact-link-item">
+                                <div class="contact-icon-circle green-bg">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">Call Support</span>
+                                    <span class="contact-val">{{ support_phone }}</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="modal-btn cancel-btn" id="modal-cancel-btn">Cancel</button>
+                        <button type="submit" class="modal-btn submit-btn">Submit Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Application Logic -->
+    <script src="/static/index.js"></script>
+</body>
+</html>

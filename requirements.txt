@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+langchain
+langchain-community
+langchain-core
+langgraph
+langchain-google-genai
+chromadb
+pypdf
+python-docx
+unstructured
+python-dotenv
+pydantic
+sentence-transformers
+langchain-huggingface
+filelock
+jinja2
