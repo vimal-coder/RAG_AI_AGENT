@@ -30,7 +30,7 @@ The application features a sleek, premium web interface on the frontend, and a p
 - **State-Graph Routing**: Leverages LangGraph to orchestrate RAG workflow states (`retrieve` -> `generate`).
 - **Semantic Vector Search**: Uses HuggingFace's embedding model (`sentence-transformers/paraphrase-MiniLM-L3-v2`) and ChromaDB vector store to fetch relevant contexts from hospital PDF guides.
 - **Strict Grounding Rules**: System prompts enforce answering queries only when supported by the retrieved contexts, preventing AI hallucinations. If information is missing, users are guided to direct email or phone support.
-- **Automatic Document Ingestion**: Scans the `DataSource` directory for new PDFs and automatically populates the vector store if it is missing or empty.
+- **Automatic Document Ingestion & Versioning**: Features a built-in background watcher that continuously monitors the `DataSource/updated/` directory. New PDFs are automatically chunked, ingested, and their older versions are purged from the vector database before being safely moved to `DataSource/archived/` with timestamping.
 - **Conversational Memory**: Retains memory of the chat up to a configurable number of turns (default: 5).
 - **Interactive Feedback System**: Built-in rating buttons (Helpful/Not Helpful) and a custom feedback form popup modal.
 
@@ -41,15 +41,15 @@ The application features a sleek, premium web interface on the frontend, and a p
 ```text
 RAG_AI_AGENT/
 ├── DataSource/             # Source documents (PDFs) containing hospital information
-│   ├── Doctor_information.pdf
-│   ├── Hospital_Policies.pdf
-│   └── ...
+│   ├── updated/            # Drop new PDF files here for automatic ingestion
+│   └── archived/           # Automatically archived PDFs with timestamp versioning
 ├── chroma_db/              # Vector database storage folder (generated automatically)
 ├── rag/                    # Core RAG python module
 │   ├── __init__.py
 │   ├── config.py           # Configuration parameters and defaults
 │   ├── graph.py            # LangGraph agent definition & LLM logic
-│   └── ingest.py           # Text splitting, embedding creation & database ingestion
+│   ├── ingest.py           # Text splitting, embedding creation & database ingestion
+│   └── watch_folder.py     # Background daemon monitoring the updated directory
 ├── static/                 # Frontend assets served statically
 │   ├── icon/               # Graphic assets (stethoscopes, mail icons, etc.)
 │   ├── index.html          # Main HTML structure template
@@ -171,15 +171,15 @@ The configuration system resolves values in the following order of precedence:
 2. **Configuration Files** (from `init.ini` or `config.ini`)
 3. **Built-in Defaults** (pre-coded default values)
 
-### Step 6: Document Ingestion (Data Vectorization)
-The application reads hospital information from the PDF files stored in the `DataSource/` folder. 
+### Step 6: Document Ingestion (Data Vectorization & Versioning)
+The application reads hospital information from the PDF files dropped into the `DataSource/updated/` folder. 
 
-- **Automatic Ingestion**: By default, when you launch the FastAPI server, it checks if `chroma_db` exists and is populated. If it's empty, it will automatically run ingestion on startup.
-- **Manual Ingestion**: If you add new PDF files to `DataSource/` or modify existing ones, you can manually trigger document ingestion by running:
-  ```bash
-  python rag/ingest.py
-  ```
-  This script will process all PDFs, split the pages into small chunks, generate vector embeddings, and save them to the `chroma_db/` folder.
+- **Automatic Continuous Ingestion**: You do not need to manually run any scripts. When you launch the FastAPI server, a background folder-watcher daemon is automatically started. Any new PDFs dropped into `DataSource/updated/` will be:
+  1. Instantly detected.
+  2. Checked for older versions (old vector chunks are automatically deleted from ChromaDB).
+  3. Chunked and saved into the `chroma_db/` vector database.
+  4. Moved automatically into `DataSource/archived/` with a timestamp to prevent clutter and maintain history.
+- **Startup Ingestion**: Additionally, any files left in the `updated` folder while the server was offline will be automatically processed on the next startup.
 
 ### Step 7: Run the FastAPI Server
 Launch the backend server using the following command:
