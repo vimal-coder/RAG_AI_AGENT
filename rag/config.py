@@ -16,9 +16,13 @@ config_ini_path = os.path.join(PROJECT_ROOT, "config.ini")
 if os.path.exists(config_ini_path):
     config_parser.read(config_ini_path)
 
-# Database configurations
+# Database and Directory configurations
 COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME") or init_parser.get("Initialization", "COLLECTION_NAME", fallback="zcare_rag")
 DB_DIR_NAME = os.getenv("CHROMA_DB_DIR_NAME") or init_parser.get("Initialization", "DB_DIR_NAME", fallback="chroma_db")
+DB_DIR = os.path.join(PROJECT_ROOT, DB_DIR_NAME)
+DATA_SOURCE_DIR = os.path.join(PROJECT_ROOT, "DataSource")
+UPDATED_DIR = os.path.join(DATA_SOURCE_DIR, "updated")
+ARCHIVED_DIR = os.path.join(DATA_SOURCE_DIR, "archived")
 
 # Ingestion configurations
 AUTO_INGEST_RAW = os.getenv("AUTO_INGEST") or init_parser.get("Initialization", "AUTO_INGEST", fallback="true")

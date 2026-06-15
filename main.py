@@ -25,17 +25,26 @@ async def lifespan(app: FastAPI):
         print("CRITICAL: GROQ_API_KEY environment variable is not set.", file=sys.stderr)
         sys.exit(1)
 
-    # Check if vector database exists and is not empty
-    db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chroma_db")
+    # Check if we should auto-ingest new files on startup
     auto_ingest = AUTO_INGEST
     
-    if auto_ingest and (not os.path.exists(db_dir) or not os.listdir(db_dir)):
-        print("Vector database 'chroma_db' not found or empty. Triggering automatic ingestion...")
+    if auto_ingest:
+        print("Checking for new documents to auto-ingest...")
         try:
             from rag import ingest_documents
             ingest_documents()
         except Exception as e:
             print(f"Error during startup ingestion: {e}", file=sys.stderr)
+
+        # Start the background folder watcher
+        import threading
+        try:
+            from rag.watch_folder import start_watching
+            watcher_thread = threading.Thread(target=start_watching, daemon=True)
+            watcher_thread.start()
+            print("Background folder watcher started successfully.")
+        except Exception as e:
+            print(f"Error starting background folder watcher: {e}", file=sys.stderr)
 
     # Pre-warm heavy RAG components in a background thread so first query is instant
     import asyncio

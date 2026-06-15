@@ -16,3 +16,4 @@ langchain-huggingface
 filelock
 jinja2
 langchain-groq
+watchdog
