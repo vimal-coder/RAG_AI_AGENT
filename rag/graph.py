@@ -8,7 +8,8 @@ from langgraph.graph import StateGraph, START, END
 from rag.config import (
     COLLECTION_NAME, DB_DIR_NAME, EMBEDDING_MODEL_NAME, 
     GROQ_MODEL_NAME, LLM_TEMPERATURE, 
-    SUPPORT_EMAIL, SUPPORT_PHONE, MAX_MEMORY_TURNS
+    SUPPORT_EMAIL, SUPPORT_PHONE, MAX_MEMORY_TURNS,
+    RETRIEVER_K, MAX_TOKENS
 )
 
 # Define Graph State
@@ -46,7 +47,7 @@ def get_retriever():
             persist_directory=get_db_dir(),
             embedding_function=get_embeddings(),
             collection_name=COLLECTION_NAME
-        ).as_retriever(search_kwargs={"k": 3})
+        ).as_retriever(search_kwargs={"k": RETRIEVER_K})
     return _retriever
 
 def get_llm():
@@ -57,6 +58,7 @@ def get_llm():
         _llm = ChatGroq(
             model=GROQ_MODEL_NAME,
             temperature=LLM_TEMPERATURE,
+            max_tokens=MAX_TOKENS,
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
     return _llm

@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List
 from contextlib import asynccontextmanager
-from rag.config import SUPPORT_EMAIL, SUPPORT_PHONE
+from rag.config import SUPPORT_EMAIL, SUPPORT_PHONE, AUTO_INGEST, ALLOWED_ORIGINS
 
 # Load environment variables
 load_dotenv()
@@ -27,12 +27,12 @@ async def lifespan(app: FastAPI):
 
     # Check if vector database exists and is not empty
     db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chroma_db")
-    auto_ingest = os.getenv("AUTO_INGEST", "true").lower() in ("true", "1", "yes")
+    auto_ingest = AUTO_INGEST
     
     if auto_ingest and (not os.path.exists(db_dir) or not os.listdir(db_dir)):
         print("Vector database 'chroma_db' not found or empty. Triggering automatic ingestion...")
         try:
-            from rag.ingest import ingest_documents
+            from rag import ingest_documents
             ingest_documents()
         except Exception as e:
             print(f"Error during startup ingestion: {e}", file=sys.stderr)
@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
     def pre_warm():
         print("Pre-warming RAG model components (Embeddings, Retriever, LLM, Graph)...")
         try:
-            from rag.graph import get_embeddings, get_retriever, get_llm, get_graph
+            from rag import get_embeddings, get_retriever, get_llm, get_graph
             get_embeddings()
             get_retriever()
             get_llm()
@@ -57,7 +57,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="ZCare AI Assistant Backend", lifespan=lifespan)
 
 # CORS configuration
-allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "")
+allowed_origins_str = ALLOWED_ORIGINS
 origins = allowed_origins_str.split(",") if allowed_origins_str else []
 app.add_middleware(
     CORSMiddleware,
@@ -107,7 +107,7 @@ async def chat_endpoint(request: ChatRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
     
     try:
-        from rag.graph import get_graph
+        from rag import get_graph
         result = get_graph().invoke({
             "question": question,
             "chat_history": request.chat_history
