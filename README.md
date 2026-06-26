@@ -69,6 +69,7 @@ RAG_AI_AGENT/
 
 Ensure you have the following installed on your system:
 - **Python 3.10** or higher
+- **uv** (Package manager, see [uv installation](https://docs.astral.sh/uv/getting-started/installation/))
 - A browser (Chrome, Edge, Firefox, etc.)
 - A **Groq API Key** (Get one from the [Groq Console](https://console.groq.com/))
 
@@ -85,13 +86,9 @@ cd c:\Users\Vimal\Documents\RAG_AI_AGENT
 ```
 
 ### Step 2: Create a Python Virtual Environment
-It is recommended to run the project in a virtual environment to isolate the dependencies:
+It is recommended to run the project in a virtual environment to isolate the dependencies. We use `uv` for ultra-fast package management:
 ```bash
-# Windows
-python -m venv .venv
-
-# macOS / Linux
-python3 -m venv .venv
+uv venv
 ```
 
 ### Step 3: Activate the Virtual Environment
@@ -112,10 +109,9 @@ Activate the environment to start using it:
 Once activated, your terminal prompt should display `(.venv)` at the beginning.
 
 ### Step 4: Install Dependencies
-Upgrade pip and install the required libraries:
+Install the required libraries using `uv add`:
 ```bash
-pip install --upgrade pip
-pip install -r requirements.txt
+uv add -r requirements.txt
 ```
 
 *(This will install FastAPI, Uvicorn, LangChain, LangGraph, ChromaDB, HuggingFace embeddings, Groq connectors, PyPDF, and other utility packages).*
