@@ -17,3 +17,4 @@ filelock
 jinja2
 langchain-groq
 watchdog
+langchain-chroma
