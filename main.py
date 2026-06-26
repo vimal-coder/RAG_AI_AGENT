@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List
 from contextlib import asynccontextmanager
-from rag.config import SUPPORT_EMAIL, SUPPORT_PHONE, AUTO_INGEST, ALLOWED_ORIGINS
+from rag.config import SUPPORT_EMAIL, SUPPORT_PHONE, AUTO_INGEST
 
 # Load environment variables
 load_dotenv()
@@ -66,11 +66,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="ZCare AI Assistant Backend", lifespan=lifespan)
 
 # CORS configuration
-allowed_origins_str = ALLOWED_ORIGINS
-origins = allowed_origins_str.split(",") if allowed_origins_str else []
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

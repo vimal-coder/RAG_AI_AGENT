@@ -46,5 +46,3 @@ SUPPORT_PHONE = os.getenv("SUPPORT_PHONE") or config_parser.get("Support", "SUPP
 # Memory configurations
 MAX_MEMORY_TURNS = int(os.getenv("RAG_MAX_MEMORY_TURNS") or config_parser.get("Memory", "MAX_MEMORY_TURNS", fallback="5"))
 
-# CORS configurations
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS") or config_parser.get("CORS", "ALLOWED_ORIGINS", fallback="")
