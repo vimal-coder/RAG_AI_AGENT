@@ -10,8 +10,8 @@ from langchain_chroma import Chroma
 
 # Import centralized configurations
 from rag.config import (
-    COLLECTION_NAME, DB_DIR_NAME, EMBEDDING_MODEL_NAME,
-    CHUNK_SIZE, CHUNK_OVERLAP, DB_DIR, DATA_SOURCE_DIR,
+    COLLECTION_NAME, EMBEDDING_MODEL_NAME,
+    CHUNK_SIZE, CHUNK_OVERLAP, DB_DIR,
     UPDATED_DIR, ARCHIVED_DIR
 )
 
